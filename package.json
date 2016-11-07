@@ -1,6 +1,6 @@
 {
   "name": "babel-plugin-always-constraint",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A babel plugin to rewrite statements labelled with always to linear constraints",
   "main": "dist/index.js",
   "jsnext:main": "index.js",
