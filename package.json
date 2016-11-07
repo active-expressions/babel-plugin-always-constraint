@@ -1,0 +1,45 @@
+{
+  "name": "babel-plugin-always-constraint",
+  "version": "1.0.0",
+  "description": "A babel plugin to rewrite statements labelled with always to linear constraints",
+  "main": "dist/index.js",
+  "jsnext:main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "mocha  test/main.js",
+    "build": "babel index.js -d dist",
+    "build-test": "npm run build && npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/active-expressions/babel-plugin-always-constraint.git"
+  },
+  "keywords": [
+    "babel-plugin",
+    "babel",
+    "plugin",
+    "transform",
+    "active",
+    "expression",
+    "expressions",
+    "active-expression"
+  ],
+  "author": {
+    "name": "Stefan Ramson",
+    "email": "stefan.ramson@gmail.com",
+    "url": "http://onsetsu.github.io/"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/active-expressions/babel-plugin-always-constraint/issues"
+  },
+  "homepage": "https://github.com/active-expressions/babel-plugin-always-constraint#readme",
+  "devDependencies": {
+    "babel-cli": "^6.10.1",
+    "babel-core": "^6.11.4",
+    "babel-preset-es2015": "^6.9.0",
+    "mocha": "2.2.5"
+  }
+}
