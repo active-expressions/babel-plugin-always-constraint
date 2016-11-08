@@ -27,15 +27,5 @@ var a = 3,
   let linearEquation = _constraintVar_a.times(2).cnEquals(_constraintVar_b);
 
   solver.addConstraint(linearEquation);
-  trigger(aexpr(() => 2 * _constraintVar_a.value() == _constraintVar_b.value())).onBecomeFalse(() => {
-    if (!solver.__solving__) {
-      solver.__solving__ = true;
-
-      try {
-        solver.solveConstraints();
-      } finally {
-        solver.__solving__ = false;
-      }
-    }
-  });
+  trigger(aexpr(() => 2 * _constraintVar_a.value() == _constraintVar_b.value())).onBecomeFalse(() => solver.solveConstraints());
 }

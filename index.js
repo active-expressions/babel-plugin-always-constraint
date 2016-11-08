@@ -174,16 +174,7 @@ export default function(param) {
                                     [
                                         t.arrowFunctionExpression(
                                             [],
-                                            template(`{
-  if(!solver.__solving__) {
-    solver.__solving__ = true;
-    try {
-    solver.solveConstraints();
-    } finally {
-      solver.__solving__ = false;
-    }
-  }
-}`)()
+                                            template(`solver.solveConstraints()`)().expression
                                         )
                                     ]
                                 )

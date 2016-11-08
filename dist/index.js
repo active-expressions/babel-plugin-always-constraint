@@ -118,7 +118,7 @@ exports.default = function (param) {
                                 }
                                 return node;
                             }
-                            var triggerStatement = t.expressionStatement(t.callExpression(t.memberExpression(t.callExpression(t.identifier('trigger'), [t.callExpression(t.identifier('aexpr'), [t.arrowFunctionExpression([], convertIntoObservable(path.node.body.expression))])]), t.identifier('onBecomeFalse')), [t.arrowFunctionExpression([], template('{\n  if(!solver.__solving__) {\n    solver.__solving__ = true;\n    try {\n    solver.solveConstraints();\n    } finally {\n      solver.__solving__ = false;\n    }\n  }\n}')())]));
+                            var triggerStatement = t.expressionStatement(t.callExpression(t.memberExpression(t.callExpression(t.identifier('trigger'), [t.callExpression(t.identifier('aexpr'), [t.arrowFunctionExpression([], convertIntoObservable(path.node.body.expression))])]), t.identifier('onBecomeFalse')), [t.arrowFunctionExpression([], template('solver.solveConstraints()')().expression)]));
 
                             path.replaceWith(t.blockStatement([getSolverInstance].concat(constraintVariableConstructors, [linearEquationConstruction, addConstraint, triggerStatement])));
                         }
