@@ -57,7 +57,7 @@ exports.default = function (param) {
                             var getSolverInstance = template('let solver = Cassowary.ClSimplexSolver.getInstance();')();
                             var addConstraint = template('solver.addConstraint(linearEquation);')();
                             function getTemplateForName(name) {
-                                return template('solver.getConstraintVariableFor(window, \'' + name + '\', () => {\n                                  let _constraintVar = new Cassowary.ClVariable(\'' + name + '\', ' + name + ');\n                                  _constraintVar.stay(Cassowary.ClStrength.weak);\n                                  aexpr(() => ' + name + ').onChange(val => _constraintVar.set_value(val));\n                                  aexpr(() => _constraintVar.value()).onChange(val => ' + name + ' = val);\n                                  return _constraintVar;\n                                })')();
+                                return template('solver.getConstraintVariableFor(window, \'' + name + '\', () => {\n                                  let _constraintVar = new Cassowary.ClVariable(\'' + name + '\', ' + name + ');\n                                  aexpr(() => ' + name + ').onChange(val => _constraintVar.set_value(val));\n                                  aexpr(() => _constraintVar.value()).onChange(val => ' + name + ' = val);\n                                  return _constraintVar;\n                                })')();
                             }
                             // identify all referenced variables
                             var variables = new Set();

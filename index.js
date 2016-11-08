@@ -54,7 +54,6 @@ export default function(param) {
                             function getTemplateForName(name) {
                                 return template(`solver.getConstraintVariableFor(window, '${name}', () => {
                                   let _constraintVar = new Cassowary.ClVariable('${name}', ${name});
-                                  _constraintVar.stay(Cassowary.ClStrength.weak);
                                   aexpr(() => ${name}).onChange(val => _constraintVar.set_value(val));
                                   aexpr(() => _constraintVar.value()).onChange(val => ${name} = val);
                                   return _constraintVar;

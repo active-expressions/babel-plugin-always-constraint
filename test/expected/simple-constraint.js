@@ -7,8 +7,6 @@ var a = 3,
   let _constraintVar_a = solver.getConstraintVariableFor(window, 'a', () => {
     let _constraintVar = new Cassowary.ClVariable('a', a);
 
-    _constraintVar.stay(Cassowary.ClStrength.weak);
-
     aexpr(() => a).onChange(val => _constraintVar.set_value(val));
     aexpr(() => _constraintVar.value()).onChange(val => a = val);
     return _constraintVar;
@@ -16,8 +14,6 @@ var a = 3,
 
   let _constraintVar_b = solver.getConstraintVariableFor(window, 'b', () => {
     let _constraintVar = new Cassowary.ClVariable('b', b);
-
-    _constraintVar.stay(Cassowary.ClStrength.weak);
 
     aexpr(() => b).onChange(val => _constraintVar.set_value(val));
     aexpr(() => _constraintVar.value()).onChange(val => b = val);
