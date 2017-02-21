@@ -9,24 +9,24 @@ var a = 3,
     {
         let solver = Cassowary.ClSimplexSolver.getInstance();
 
-        let _constraintVar_a = solver.getConstraintVariableFor(_scope, 'a', () => {
-            let _constraintVar = new Cassowary.ClVariable('a', a);
+        let _constraintVar_a = solver.getConstraintVariableFor(_scope, "a", () => {
+            let _constraintVar = new Cassowary.ClVariable("a", a);
 
             aexpr(() => a).onChange(val => _constraintVar.set_value(val));
             aexpr(() => _constraintVar.value()).onChange(val => a = val);
             return _constraintVar;
         });
 
-        let _constraintVar_b = solver.getConstraintVariableFor(_scope, 'b', () => {
-            let _constraintVar = new Cassowary.ClVariable('b', b);
+        let _constraintVar_b = solver.getConstraintVariableFor(_scope, "b", () => {
+            let _constraintVar = new Cassowary.ClVariable("b", b);
 
             aexpr(() => b).onChange(val => _constraintVar.set_value(val));
             aexpr(() => _constraintVar.value()).onChange(val => b = val);
             return _constraintVar;
         });
 
-        let _constraintVar_c = solver.getConstraintVariableFor(_scope2, 'c', () => {
-            let _constraintVar = new Cassowary.ClVariable('c', c);
+        let _constraintVar_c = solver.getConstraintVariableFor(_scope2, "c", () => {
+            let _constraintVar = new Cassowary.ClVariable("c", c);
 
             aexpr(() => c).onChange(val => _constraintVar.set_value(val));
             aexpr(() => _constraintVar.value()).onChange(val => c = val);
