@@ -1,7 +1,7 @@
 # babel-plugin-always-constraint
 A babel plugin to rewrite statements labelled with always to linear constraints
 
-Live editable at http://astexplorer.net/#/JrmlrJciNw/6
+Live editable at http://astexplorer.net/#/JrmlrJciNw/7
 
 ## Example
 

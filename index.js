@@ -1,9 +1,7 @@
 const FLAG_GENERATED_SCOPE_OBJECT = Symbol('FLAG: generated scope object');
 const FLAG_SHOULD_NOT_REWRITE_IDENTIFIER = Symbol('FLAG: should not rewrite identifier');
 
-export default function(param) {
-    let { types: t, template, traverse } = param;
-
+export default function({ types: t, template, traverse }) {
     function getPropertyFromMemberExpression(node) {
         // We are looking for MemberExpressions, which have two distinct incarnations:
         // 1. we have a computed MemberExpression like a[b], with the property being an Expression
@@ -45,44 +43,103 @@ export default function(param) {
                         return uniqueIdentifier;
                     }
 
+                    function getScopeIdentifierForVariable(path) {
+                        if(path.scope.hasBinding(path.node.name)) {
+                            //logIdentifier('get local var', path)
+                            path.node[FLAG_SHOULD_NOT_REWRITE_IDENTIFIER] = true;
+
+                            let parentWithScope = path.findParent(par =>
+                                par.scope.hasOwnBinding(path.node.name)
+                            );
+                            if(parentWithScope) {
+                                return getIdentifierForExplicitScopeObject(parentWithScope);
+                            }
+                        } else {
+                            //logIdentifier('get global var', path);
+                            path.node[FLAG_SHOULD_NOT_REWRITE_IDENTIFIER] = true;
+                            return t.identifier('window');
+                        }
+                    }
+
                     path.traverse({
                         LabeledStatement(path) {
                             if(path.node.label.name !== 'always') { return; }
 
                             let getSolverInstance = template(`let solver = Cassowary.ClSimplexSolver.getInstance();`)()
                             let addConstraint = template(`solver.addConstraint(linearEquation);`)()
-                            function getTemplateForName(name) {
-                                return template(`solver.getConstraintVariableFor(window, '${name}', () => {
-                                  let _constraintVar = new Cassowary.ClVariable('${name}', ${name});
-                                  aexpr(() => ${name}).onChange(val => _constraintVar.set_value(val));
-                                  aexpr(() => _constraintVar.value()).onChange(val => ${name} = val);
+                            function getTemplateForName(name, SCOPE, label, ACCESSOR, INIT) {
+                                return template(`solver.getConstraintVariableFor(SCOPE, '${name}', () => {
+                                  let _constraintVar = new Cassowary.ClVariable('${label}', INIT);
+                                  aexpr(() => ACCESSOR).onChange(val => _constraintVar.set_value(val));
+                                  aexpr(() => _constraintVar.value()).onChange(val => ACCESSOR = val);
                                   return _constraintVar;
-                                })`)();
+                                })`)({
+                                    SCOPE,
+                                    ACCESSOR,
+                                    INIT
+                                });
                             }
                             // identify all referenced variables
                             let variables = new Set();
+                            let members = new Set();
                             path.traverse({
                                 Identifier(path) {
                                     if(path.node.name === 'always') { return; }
-                                    variables.add(path.node.name)
+                                    if(path.parentPath.isMemberExpression()) { return; }
+                                    variables.add(path)
+                                },
+                                MemberExpression(path) {
+                                    members.add(path);
                                 }
                             });
                             console.log(variables);
 
                             let constraintVariableConstructors = [];
                             let constraintVarsByVariables = new Map();
+                            let constraintVarsByMembers = new Map();
 
-                            variables.forEach(val => {
+
+                            function foo() {
+
+                                return identifier;
+                            }
+                            Array.from(variables).forEach(path => {
+                                let val = path.node.name;
                                 console.log(val);
+                                let scopeIdentifier = getScopeIdentifierForVariable(path);
                                 let identifier = path.scope.generateUidIdentifier('constraintVar_' + val);
                                 let constraintVariableConstructor = t.variableDeclaration('let', [
                                     t.variableDeclarator(
                                         identifier,
-                                        getTemplateForName(val).expression
+                                        getTemplateForName(
+                                            val,
+                                            scopeIdentifier,
+                                            val,
+                                            path.node,
+                                            path.node
+                                        ).expression
                                     )
                                 ]);
                                 constraintVariableConstructors.push(constraintVariableConstructor);
                                 constraintVarsByVariables.set(val, identifier);
+                            });
+
+                            Array.from(members).forEach(path => {
+                                let identifier = path.scope.generateUidIdentifier('constraintVar_' + path.node.object.name + '_' + path.node.property.name);
+                                let constraintVariableConstructor = t.variableDeclaration('let', [
+                                    t.variableDeclarator(
+                                        identifier,
+                                        getTemplateForName(
+                                            path.node.property.name,
+                                            path.node.object,
+                                            path.node.object.name + '.' + path.node.property.name,
+                                            path.node,
+                                            path.node
+                                        ).expression
+                                    )
+                                ]);
+                                constraintVariableConstructors.push(constraintVariableConstructor);
+                                constraintVarsByMembers.set(path.node.object.name + '.' + path.node.property.name, identifier);
                             });
 
                             function buildLinearEquation(node) {
@@ -124,6 +181,9 @@ export default function(param) {
                                 if(t.isNumericLiteral(node)) {
                                     return t.numericLiteral(node.value);
                                 }
+                                if(t.isMemberExpression(node)) {
+                                    return constraintVarsByMembers.get(node.object.name + '.' + node.property.name);
+                                }
                                 throw new Error(`unknown type in always statement: ${node.type}`)
                             }
 
@@ -140,6 +200,15 @@ export default function(param) {
                                     return t.callExpression(
                                         t.memberExpression(
                                             constraintVarsByVariables.get(node.name),
+                                            t.identifier('value')
+                                        ),
+                                        []
+                                    );
+                                }
+                                if(t.isMemberExpression(node)) {
+                                    return t.callExpression(
+                                        t.memberExpression(
+                                            constraintVarsByMembers.get(node.object.name + '.' + node.property.name),
                                             t.identifier('value')
                                         ),
                                         []
