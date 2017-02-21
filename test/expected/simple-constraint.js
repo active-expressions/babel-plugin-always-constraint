@@ -1,7 +1,6 @@
 let _scope = {};
 var a = 3,
-    b = 2,
-    obj = { prop: 42 };
+    b = 2;
 
 {
     let _scope2 = {};
@@ -34,17 +33,9 @@ var a = 3,
             return _constraintVar;
         });
 
-        let _constraintVar_obj_prop = solver.getConstraintVariableFor(obj, 'prop', () => {
-            let _constraintVar = new Cassowary.ClVariable('obj.prop', obj.prop);
-
-            aexpr(() => obj.prop).onChange(val => _constraintVar.set_value(val));
-            aexpr(() => _constraintVar.value()).onChange(val => obj.prop = val);
-            return _constraintVar;
-        });
-
-        let linearEquation = _constraintVar_a.times(2).plus(_constraintVar_obj_prop).cnEquals(_constraintVar_b.plus(_constraintVar_c));
+        let linearEquation = _constraintVar_a.times(2).cnEquals(_constraintVar_b.plus(_constraintVar_c));
 
         solver.addConstraint(linearEquation);
-        trigger(aexpr(() => 2 * _constraintVar_a.value() + _constraintVar_obj_prop.value() == _constraintVar_b.value() + _constraintVar_c.value())).onBecomeFalse(() => solver.solveConstraints());
+        trigger(aexpr(() => 2 * _constraintVar_a.value() == _constraintVar_b.value() + _constraintVar_c.value())).onBecomeFalse(() => solver.solveConstraints());
     }
 }

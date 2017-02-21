@@ -1,6 +1,6 @@
-var a = 3, b = 2, obj = { prop: 42 };
+var a = 3, b = 2;
 
 {
     let c = 4;
-    always: 2 * a + obj.prop == b + c;
+    always: 2 * a == b + c;
 }
