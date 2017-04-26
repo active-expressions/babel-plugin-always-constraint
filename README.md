@@ -1,4 +1,4 @@
-# babel-plugin-always-constraint
+# babel-plugin-always-constraint [![Build Status](https://travis-ci.org/active-expressions/babel-plugin-always-constraint.svg?branch=master)](https://travis-ci.org/active-expressions/babel-plugin-always-constraint)
 A babel plugin to rewrite statements labelled with always to linear constraints
 
 Live editable at http://astexplorer.net/#/JrmlrJciNw/7
